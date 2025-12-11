@@ -35,8 +35,13 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error("Error fetching tasks:", error);
+      // In production, don't expose detailed error messages
+      const isProduction = process.env.NODE_ENV === "production";
       return NextResponse.json(
-        { error: "Failed to fetch tasks" },
+        { 
+          error: "Failed to fetch tasks",
+          ...(isProduction ? {} : { details: error.message })
+        },
         { status: 500 }
       );
     }
