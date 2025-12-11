@@ -1,0 +1,182 @@
+{
+  "name": "Rocketist – Task Enrichment",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "task-created",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "f5ffba3e-8f3c-4faa-a8ea-bc32ac4453e9",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "task-created"
+    },
+    {
+      "parameters": {
+        "jsCode": "//-------------------------------------------------------\n// 1) Extract taskId from webhook\n//-------------------------------------------------------\nconst taskId =\n  $('Webhook').item.json.body?.taskId ||\n  $('Webhook').item.json.taskId;\n\nif (!taskId) {\n  throw new Error(\"taskId not found (Webhook → body.taskId).\");\n}\n\n//-------------------------------------------------------\n// 2) Extract raw AI output text\n//    (Your model returns an array → output[0] → content[0].text)\n//-------------------------------------------------------\nlet raw;\n\n// Strict path for your current model shape\nif (\n  Array.isArray($input.item.json) &&\n  $input.item.json[0]?.output?.[0]?.content?.[0]?.text\n) {\n  raw = $input.item.json[0].output[0].content[0].text;\n}\n\n// Alternative path for OpenAI/Claude Chat formats\nif (!raw && $input.item.json.output?.[0]?.content?.[0]?.text) {\n  raw = $input.item.json.output[0].content[0].text;\n}\n\n// If still nothing, check other common fields\nif (!raw) {\n  raw =\n    $input.item.json.text ||\n    $input.item.json.response ||\n    $input.item.json.content ||\n    $input.item.json;\n}\n\n//-------------------------------------------------------\n// 3) Parse JSON from the raw string\n//-------------------------------------------------------\nlet parsed;\n\ntry {\n  if (typeof raw === \"string\") {\n    parsed = JSON.parse(raw);\n  } else {\n    parsed = raw; // already an object\n  }\n} catch (err) {\n  // attempt to extract from markdown ```json\n  const match =\n    typeof raw === \"string\" &&\n    (\n      raw.match(/```json\\s*([\\s\\S]*?)```/) ||\n      raw.match(/```\\s*([\\s\\S]*?)```/)\n    );\n\n  if (match) {\n    parsed = JSON.parse(match[1]);\n  } else {\n    throw new Error(\"❌ Unable to parse JSON from AI output:\\n\" + raw);\n  }\n}\n\n//-------------------------------------------------------\n// 4) Normalize steps → [{ order, text }]\n//-------------------------------------------------------\nconst steps = Array.isArray(parsed.steps)\n  ? parsed.steps.map((step, index) => ({\n      order: index + 1,\n      text: typeof step === \"string\" ? step : step.text || String(step)\n    }))\n  : [];\n\n//-------------------------------------------------------\n// 5) Return object to be PATCHed to /enrichment\n//-------------------------------------------------------\nreturn {\n  json: {\n    taskId,\n    description: parsed.description || null,\n    steps,\n    extra_info: parsed.extra_info || null,\n    ai_last_run_at: new Date().toISOString()\n  }\n};"
+      },
+      "id": "c9b8b775-955e-4c77-9e89-fea54e090f04",
+      "name": "Format Enrichment Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://0e536f896dc4.ngrok-free.app/api/tasks/{{$json.taskId}}/enrichment",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  description: $json.description,\n  steps: $json.steps,\n  extra_info: $json.extra_info,\n  ai_last_run_at: $json.ai_last_run_at\n}) }}",
+        "options": {}
+      },
+      "id": "9d9b6d05-0011-4a06-87c6-0ead9ef5b327",
+      "name": "Update Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"taskId\": $json.taskId } }}",
+        "options": {}
+      },
+      "id": "e1f96f07-9ba0-473b-a1ac-4baee32a3d8e",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1072,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are an AI assistant that enriches user tasks.\n\nYour goals:\n1. Rewrite the task title into a clearer, more actionable description.\n2. Provide a practical step-by-step checklist to complete the task.\n3. Add extra useful information, including tips and real or highly plausible links when relevant.\n\nVery important:\n- ALWAYS respond with a single valid JSON object.\n- Do NOT include markdown, explanations, or any text before or after the JSON.\n- The JSON MUST have exactly these fields at the top level:\n  - \"description\": string\n  - \"steps\": array of strings (each one a single actionable step)\n  - \"extra_info\": object with:\n      - \"notes\": string (optional notes or context)\n      - \"links\": array of strings (each one a full URL or useful resource name)"
+            },
+            {
+              "content": "=Original task title: \"{{ $json.body.title }}\"\n\n1) Rewrite the title into a clearer, actionable description that explains what should be done and what the final outcome is.\n2) Provide a step-by-step checklist as an array of short, imperative steps (verbs first).\n3) Search your knowledge and, when useful, add external links or references (websites, tools, services) related to this task.\n4) Return ONLY a JSON object in this exact structure:\n\n{\n  \"description\": \"string\",\n  \"steps\": [\"step 1\", \"step 2\", \"...\"],\n  \"extra_info\": {\n    \"notes\": \"string with extra context or tips\",\n    \"links\": [\"https://example.com/resource1\", \"https://example.com/resource2\"]\n  }\n}\n\nDo NOT include markdown fences, backticks, or any additional text. Return only the JSON."
+            }
+          ]
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "text"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        272,
+        0
+      ],
+      "id": "6a62a6de-a297-43fd-ba8d-1f504da0d2a9",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "LCmDExkria7VtC7B",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Format Enrichment Data": {
+      "main": [
+        [
+          {
+            "node": "Update Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Task": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Format Enrichment Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f2eb0622-084b-4fc9-a0b7-03df301e69b2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cf065f57097f33d426a6a2cfaa5f7d365bcb32f72aa43cf9750933603948d9b5"
+  },
+  "id": "CwFnTTD5tIMt9rsZ",
+  "tags": []
+}
