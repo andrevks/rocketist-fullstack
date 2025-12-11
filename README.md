@@ -150,10 +150,13 @@ npm install
    # Install Supabase CLI (if not installed)
    npm install -g supabase
    
-   # Link to your project
-   supabase link --project-ref your-project-ref
+   # Run migrations (script automatically links to project)
+   ./scripts/run-migrations.sh
+   ```
    
-   # Run migrations
+   **Or manually:**
+   ```bash
+   supabase link --project-ref your-project-ref
    supabase db push
    ```
 
