@@ -1,0 +1,35 @@
+.switcher {
+  display: flex;
+  gap: 0.5rem;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  background: var(--gray-500);
+  padding: 0.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--gray-400);
+}
+
+.switcher button {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  color: var(--gray-200);
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.switcher button:hover {
+  background: var(--gray-400);
+  color: var(--gray-100);
+}
+
+.switcher button.active {
+  background: var(--purple-500);
+  color: white;
+}
+

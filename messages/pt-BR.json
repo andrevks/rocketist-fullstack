@@ -1,0 +1,45 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "create": "Criar",
+    "delete": "Excluir",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "edit": "Editar",
+    "close": "Fechar",
+    "confirm": "Confirmar",
+    "yes": "Sim",
+    "no": "Não"
+  },
+  "tasks": {
+    "title": "Tarefas",
+    "loading": "Carregando tarefas...",
+    "empty": {
+      "title": "Você ainda não tem tarefas cadastradas",
+      "description": "Crie tarefas e organize seus itens a fazer"
+    },
+    "created": "Tarefas Criadas",
+    "completed": "Concluídas",
+    "completedOf": "de",
+    "progress": "Progresso",
+    "syncing": "Sincronizando...",
+    "addNew": "Adicione uma nova tarefa",
+    "descriptionPlaceholder": "Clique duas vezes para adicionar descrição...",
+    "aiDetails": "Detalhes da IA",
+    "steps": "Passos",
+    "extraInfo": "Informações Extras",
+    "links": "Links",
+    "notes": "Notas",
+    "enrichmentPending": "Enriquecimento com IA pendente…",
+    "deleteConfirm": "Tem certeza de que deseja excluir esta tarefa?",
+    "updateError": "Falha ao atualizar tarefa. Por favor, tente novamente.",
+    "deleteError": "Falha ao excluir tarefa. Por favor, tente novamente.",
+    "createError": "Falha ao criar tarefa. Por favor, tente novamente."
+  },
+  "language": {
+    "switch": "Alterar Idioma",
+    "english": "English",
+    "portuguese": "Português"
+  }
+}
+

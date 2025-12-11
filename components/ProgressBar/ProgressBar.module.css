@@ -1,0 +1,32 @@
+.container {
+  margin-bottom: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+  color: var(--gray-200);
+}
+
+.track {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--gray-400);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue-100), var(--purple-500));
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+.caption {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--gray-300);
+}

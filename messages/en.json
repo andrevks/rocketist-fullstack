@@ -1,0 +1,45 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "create": "Create",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "loading": "Loading tasks...",
+    "empty": {
+      "title": "You don't have any tasks yet",
+      "description": "Create tasks and organize your to-do items"
+    },
+    "created": "Tasks Created",
+    "completed": "Completed",
+    "completedOf": "of",
+    "progress": "Progress",
+    "syncing": "Syncing...",
+    "addNew": "Add a new task",
+    "descriptionPlaceholder": "Double-click to add description...",
+    "aiDetails": "AI Details",
+    "steps": "Steps",
+    "extraInfo": "Extra Info",
+    "links": "Links",
+    "notes": "Notes",
+    "enrichmentPending": "AI enrichment pending…",
+    "deleteConfirm": "Are you sure you want to delete this task?",
+    "updateError": "Failed to update task. Please try again.",
+    "deleteError": "Failed to delete task. Please try again.",
+    "createError": "Failed to create task. Please try again."
+  },
+  "language": {
+    "switch": "Switch Language",
+    "english": "English",
+    "portuguese": "Português"
+  }
+}
+

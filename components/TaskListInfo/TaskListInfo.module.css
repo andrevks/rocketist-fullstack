@@ -1,0 +1,24 @@
+.taskListInfo {
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.taskListInfo span {
+  color: var(--gray-200);
+  background: var(--gray-400);
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  margin-left: 0.5rem;
+  border-radius: 999px;
+}
+
+.taskCreatedCount {
+  color: var(--blue-100);
+}
+
+.taskDoneCount {
+  color: var(--purple-100);
+}
+
