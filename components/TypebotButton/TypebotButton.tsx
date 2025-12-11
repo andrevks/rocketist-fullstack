@@ -1,4 +1,4 @@
-https://rocketist-fullstack.vercel.app/"use client";
+"use client";
 
 import { useRouter } from "next/navigation";
 import styles from "./TypebotButton.module.css";
