@@ -12,10 +12,19 @@ echo ""
 if ! command -v supabase &> /dev/null; then
   echo "❌ Supabase CLI not found."
   echo ""
-  echo "Install it with:"
-  echo "  npm install -g supabase"
+  echo "Install it with one of these methods:"
   echo ""
-  echo "Or use the Supabase Dashboard method (see README.md)"
+  echo "  Option 1: Homebrew (macOS/Linux)"
+  echo "    brew install supabase/tap/supabase"
+  echo ""
+  echo "  Option 2: Use npx (no installation needed)"
+  echo "    npx supabase@latest link --project-ref YOUR_PROJECT_REF"
+  echo "    npx supabase@latest db push"
+  echo ""
+  echo "  Option 3: Supabase Dashboard (easiest)"
+  echo "    Go to Supabase Dashboard → SQL Editor"
+  echo "    Copy/paste SQL from infra/supabase/migrations/*.sql"
+  echo ""
   exit 1
 fi
 

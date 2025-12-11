@@ -146,19 +146,20 @@ npm install
      4. Paste and execute
 
    **Option B: Using Supabase CLI**
-   ```bash
-   # Install Supabase CLI (if not installed)
-   npm install -g supabase
    
-   # Run migrations (script automatically links to project)
+   **macOS/Linux (Homebrew):**
+   ```bash
+   brew install supabase/tap/supabase
    ./scripts/run-migrations.sh
    ```
    
-   **Or manually:**
+   **Or use npx (no installation):**
    ```bash
-   supabase link --project-ref your-project-ref
-   supabase db push
+   npx supabase@latest link --project-ref your-project-ref
+   npx supabase@latest db push
    ```
+   
+   **Note**: Supabase CLI can't be installed via `npm install -g` anymore. Use Homebrew or npx instead.
 
 ### Step 4: Configure Environment Variables
 
