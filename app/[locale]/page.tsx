@@ -5,6 +5,7 @@ import { Header } from "@/components/Header/Header";
 import { NewTask } from "@/components/NewTask/NewTask";
 import { TaskList } from "@/components/TaskList/TaskList";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher/LanguageSwitcher";
+import { TypebotButton } from "@/components/TypebotButton/TypebotButton";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -22,6 +23,7 @@ export default function Home() {
         <NewTask onTaskCreated={handleTaskCreated} />
         <TaskList refreshTrigger={refreshKey} />
       </main>
+      <TypebotButton />
     </div>
   );
 }

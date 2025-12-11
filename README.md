@@ -55,6 +55,11 @@ All workflows are **active in production** and demonstrate real-world automation
 - Production-grade error handling and architecture
 - Clean, maintainable codebase
 
+### 🌐 Live Production Links
+
+- **Frontend Application**: [https://rocketist-fullstack.vercel.app](https://rocketist-fullstack.vercel.app)
+- **Typebot Chat Interface**: [https://typebot.co/rocketist-todo-bot-w1x5v3z](https://typebot.co/rocketist-todo-bot-w1x5v3z)
+
 See screenshots in [`.github/assets/`](.github/assets/) showing the live implementation.
 
 ## Requirements
